@@ -7,7 +7,7 @@ using namespace std;
 int main() {
     SetConsoleCP(1251);
     SetConsoleOutputCP(1251);
-    
+
     string* AS; // массив вводимых строк, это результат
     string* AS2; // дополнительный массив строк
     int count; // количество элементов в массиве
@@ -23,9 +23,27 @@ int main() {
     {
         cout << "=> ";
         cin.getline(buf, 80, '\n'); // строки вводятся с пробелами
-
-        
         s = buf;
+        char* pch = strtok(buf, " "),  // получаем первое слово
+            * word = 0; // самое длинное слово
+
+        int length = strlen(pch);
+        int maxLen = 0; // самое длинное слово
+
+        while (pch != NULL) // пока есть слова
+        {
+            length = strlen(pch);// определяем длинну слова
+
+            if (maxLen < length) // определяем самое длинное слово
+            {
+                maxLen = length;
+                word = pch; // сохраняем указатель на текущее слово
+            }
+
+            pch = strtok(NULL, " "); // получаем следующее слово
+        }
+        cout << "Самое длинное слово: " << word<<endl; // само слово
+
 
         if (s != "")
         {
@@ -34,7 +52,7 @@ int main() {
                 count++;
 
                 AS2 = new string[count];
-               
+
                 for (int i = 0; i < count - 1; i++)
                     AS2[i] = AS[i];
 
