@@ -125,7 +125,7 @@ void zadanie3() {
 
     for (int i = 0; i < n; i++) {
         unsigned int shet;
-        cout << "Введите расчетный счет плательщика, чтобы узнат сумму списания:" << endl;
+        cout << "Введите расчетный счет плательщика, чтобы узнать сумму списания:" << endl;
         cin >> shet;
         if (shet == spisok[i].plat)
             cout << "Со счета №" << spisok[i].plat << " было списано: " << spisok[i].summa << " руб." << endl;
