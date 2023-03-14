@@ -19,7 +19,7 @@ int main() {
     SetConsoleCP(1251);
     SetConsoleOutputCP(1251);
 
-    zadanie3();
+    zadanie2();
     
 }
 
@@ -99,11 +99,23 @@ void zadanie1() {
 }
 
 void zadanie2(){
+    string s;
+    int i =1;
+    ifstream file("first.txt");
+    ofstream end("final.txt");
 
+    if (!file.is_open())
+        cout << "Файл не найден" << endl;
+    if (file.is_open())
+        cout << "Нумерация прошла успешно:)"<<endl;
+    while (!file.eof())//считывает до конца файла
+    {   //чтение файла и нумерация строк
+        getline(file, s);
+        end << i++ <<" ";
+        end << s << endl;
 
-
-
-
+    }
+    file.close();
  }
 
 void zadanie3() {
@@ -125,7 +137,7 @@ void zadanie3() {
 
     for (int i = 0; i < n; i++) {
         unsigned int shet;
-        cout << "Введите расчетный счет плательщика, чтобы узнать сумму списания:" << endl;
+        cout << "Введите расчетный счет плательщика, чтобы узнат сумму списания:" << endl;
         cin >> shet;
         if (shet == spisok[i].plat)
             cout << "Со счета №" << spisok[i].plat << " было списано: " << spisok[i].summa << " руб." << endl;
