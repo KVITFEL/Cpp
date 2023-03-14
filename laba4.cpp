@@ -4,14 +4,22 @@
 #include <fstream>
 using namespace std;
 void zadanie1();
+void zadanie2();
+void zadanie3();
 
+struct order{
+    
+    unsigned int plat, pol;
+    int summa;
+    string descrp;
+};
 
 
 int main() {
     SetConsoleCP(1251);
     SetConsoleOutputCP(1251);
 
-    zadanie1();
+    zadanie3();
     
 }
 
@@ -88,4 +96,41 @@ void zadanie1() {
     //После использования массива AS освободить память, выделенную для него
     delete[] AS;
 
+}
+
+void zadanie2(){
+
+
+
+
+
+ }
+
+void zadanie3() {
+    const int n = 1;//кол-во записей 
+    order spisok[n];
+    for (int i = 0; i < n; i++) {
+        cout << "Введите расчетный счет плательщика: " << endl;
+        cin >> spisok[i].plat;
+        cout << "Введите расчетный счет получателя: " << endl;
+        cin >> spisok[i].pol;
+        cout << "Описание назначения платежа: " << endl;
+        cin.ignore(sizeof(int), '\n');
+        getline(cin, spisok[i].descrp);
+        cout << "Введите сумму: " << endl;
+        cin >> spisok[i].summa;
+    }
+
+    cout << endl;
+
+    for (int i = 0; i < n; i++) {
+        unsigned int shet;
+        cout << "Введите расчетный счет плательщика, чтобы узнат сумму списания:" << endl;
+        cin >> shet;
+        if (shet == spisok[i].plat)
+            cout << "Со счета №" << spisok[i].plat << " было списано: " << spisok[i].summa << " руб." << endl;
+        else
+            cout << "Такого расчетного счета не существует" << endl;
+        break;
+    }
 }
