@@ -12,37 +12,70 @@ public:
 	int rows;
 	int columns;
 
-	TwoDimensionalArray(double** doubleArray, int columns) {
+	TwoDimensionalArray(double** doubleArray, int rows, int columns) {
 		this->doubleArray = doubleArray;
 
-		this->rows = sizeof(this->doubleArray) / sizeof(this->doubleArray[0]);
+		this->rows = rows;
 		this->columns = columns;
 
 		for (int i = 0; i < rows; i++) {
-			this->doubleArray[i] = new double[this->columns];
+			this->doubleArray[i] = new double[columns];
 		}
 
-		elementsCount = this->rows * this->columns;
+		this->elementsCount = rows * columns;
 	}
 
-	TwoDimensionalArray operator++ () {
+	TwoDimensionalArray& operator++ () {
 		for (int i = 0; i < this->rows; i++) {
 			for (int j = 0; j < this->columns; j++) {
 				this->doubleArray[i][j] += 1;
 			}
 		}
+		return *this;
 	}
 
-	TwoDimensionalArray operator-- () {
+	TwoDimensionalArray& operator-- () {
 		for (int i = 0; i < this->rows; i++) {
 			for (int j = 0; j < this->columns; j++) {
-				this->doubleArray[i][j] += 1;
+				this->doubleArray[i][j] -= 1;
 			}
 		}
+		return *this;
 	}
 
-	void fillArray(int row, int column, double value) {
-		this->doubleArray[row][column] = value;
+	TwoDimensionalArray operator ++ (int) {
+		TwoDimensionalArray copy(*this);
+		++(*this);
+		return copy;
+	}
+
+	TwoDimensionalArray operator -- (int) {
+		TwoDimensionalArray copy(*this);
+		--(*this);
+		return copy;
+	}
+
+	operator bool() const {
+		for (int i = 0; i < this->rows; i++) {
+			for (int j = 0; j < this->columns - 1; j++) {
+				if (this->doubleArray[i][j] < this->doubleArray[i][j + 1]) {
+					continue;
+				}
+				else {
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+
+	void fillArray() {
+		for (int i = 0; i < this->rows; i++) {
+			for (int j = 0; j < this->columns; j++) {
+				cout << "Введите значение [" << i << "][" << j << "] элемента: ";
+				cin >> this->doubleArray[i][j];
+			}
+		}
 	}
 
 	void showArray() {
@@ -54,17 +87,19 @@ public:
 		}
 	}
 
-	double** sortArray() {
+	void sortArray() {
+		double temp;
 		for (int i = 0; i < this->rows; i++) {
-			for (int j = 0; j < this->columns; j++) {
-				double temp = this->doubleArray[i][j];
+			for (int j = 0; j < this->columns - 1; j++) {
 				if (this->doubleArray[i][j] < this->doubleArray[i][j + 1]) {
+					temp = this->doubleArray[i][j];
 					this->doubleArray[i][j] = this->doubleArray[i][j + 1];
 					this->doubleArray[i][j + 1] = temp;
 				}
 			}
 		}
-		return this->doubleArray;
+		cout << "Отсортированный массив: " << endl;
+		this->showArray();
 	}
 
 	int getElementsCount() {
@@ -86,4 +121,48 @@ public:
 
 int main() {
 	setlocale(LC_CTYPE, "rus");
+
+	int rows = 2;
+	int columns = 2;
+
+	double** doubleArray = new double* [rows];
+	TwoDimensionalArray twoDimensionalArray(doubleArray, rows, columns);
+
+	twoDimensionalArray.fillArray(); // вводим значения с клавиатуры
+	twoDimensionalArray.showArray(); // выводим массив
+	twoDimensionalArray.sortArray(); // сортируем массив в порядке убывания
+
+	cout << "------------------------------------------------------------------------" << endl;
+
+	double valueForIncrease = 1.5;
+
+	int elementsCount = twoDimensionalArray.getElementsCount(); // получаем общее количество элементов массива
+	cout << "Количество элементов - " << elementsCount << endl;
+
+	cout << "Увеличиваем элементы на скаляр - " << valueForIncrease << endl;
+	twoDimensionalArray.increaseElements(valueForIncrease);
+	twoDimensionalArray.showArray();
+
+	cout << "------------------------------------------------------------------------" << endl;
+
+	double element = twoDimensionalArray.getElement(0, 1); // обращаемся к элементу по индексу
+	cout << element << endl; 
+
+	cout << "------------------------------------------------------------------------" << endl;
+
+	cout << "Операция ++: " << endl;
+	twoDimensionalArray++;
+	twoDimensionalArray.showArray();
+
+	cout << "Операция --: " << endl;
+	twoDimensionalArray--;
+	twoDimensionalArray.showArray();
+
+	cout << endl;
+	if (twoDimensionalArray) {
+		cout << "Массив отсортирован по возрастанию" << endl;
+	}
+	else {
+		cout << "Массив не отсортирован по возрастанию" << endl;
+	}
 }
