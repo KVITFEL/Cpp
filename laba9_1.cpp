@@ -35,7 +35,7 @@ int main() {
     SetConsoleCP(1251);
     SetConsoleOutputCP(1251);
     // Открытие файла с записями о звонках
-    ifstream inputFile("call_records.txt"); // Имя вашего файла с записями о звонках
+    ifstream inputFile("calls.txt"); // Имя вашего файла с записями о звонках
 
     if (!inputFile) {
         cout << "Ошибка открытия файла." << endl;
