@@ -1,148 +1,248 @@
 #include <iostream>
-#include <string>
-#include <windows.h>
 #include <fstream>
+#include <vector>
+#include <windows.h>
 using namespace std;
-void zadanie1();
-void zadanie2();
-void zadanie3();
 
-struct order{
-    
-    unsigned int plat, pol;
-    int summa;
-    string descrp;
+class Tourist {
+private:
+    string name;
+    string surname;
+    int age;
+    string email;
+    string city;
+    double totalCost;
+
+public:
+    // Конструктор класса
+    Tourist(string n, string s, int a, string e, string c, double cost) {
+        name = n;
+        surname = s;
+        age = a;
+        email = e;
+        city = c;
+        totalCost = cost;
+    }
+
+    // Методы доступа к приватным членам класса
+    string getName() { return name; }
+    string getSurname() { return surname; }
+    int getAge() { return age; }
+    string getEmail() { return email; }
+    string getCity() { return city; }
+    double getTotalCost() { return totalCost; }
+
+    void setName(string n) { name = n; }
+    void setSurname(string s) { surname = s; }
+    void setAge(int a) { age = a; }
+    void setEmail(string e) { email = e; }
+    void setCity(string c) { city = c; }
+    void setTotalCost(double cost) { totalCost = cost; }
 };
 
+class TouristDatabase {
+private:
+    vector<Tourist> tourists;
+    string filename;
+
+public:
+    // Конструктор класса
+    TouristDatabase(string file) {
+        filename = file;
+    }
+
+    // Метод для считывания данных из файла
+    void loadData() {
+        ifstream file(filename);
+        if (file.is_open()) {
+            string name, surname, email, city;
+            int age;
+            double totalCost;
+
+            while (file >> name >> surname >> age >> email >> city >> totalCost) {
+                Tourist tourist(name, surname, age, email, city, totalCost);
+                tourists.push_back(tourist);
+            }
+
+            file.close();
+            cout << "Данные успешно загружены из файла." << endl;
+        }
+        else {
+            cout << "Ошибка при открытии файла." << endl;
+        }
+    }
+
+    // Метод для добавления нового туриста
+    void addTourist(Tourist tourist) {
+        tourists.push_back(tourist);
+        cout << "Новый турист добавлен." << endl;
+    }
+
+    // Метод для изменения данных туриста
+    void updateTourist(string email) {
+        for (Tourist& tourist : tourists) {
+            if (tourist.getEmail() == email) {
+                string name, surname, city;
+                int age;
+                double totalCost;
+
+                cout << "Введите новые данные для туриста:" << endl;
+                cout << "Имя: ";
+                cin >> name;
+                cout << "Фамилия: ";
+                cin >> surname;
+                cout << "Возраст: ";
+                cin >> age;
+                cout << "Город: ";
+                cin >> city;
+                cout << "Общая стоимость проживания: ";
+                cin >> totalCost;
+
+                tourist.setName(name);
+                tourist.setSurname(surname);
+                tourist.setAge(age);
+                tourist.setCity(city);
+                tourist.setTotalCost(totalCost);
+
+                cout << "Данные туриста успешно обновлены." << endl;
+                return;
+            }
+        }
+
+        cout << "Турист с указанной электронной почтой не найден." << endl;
+    }
+
+    // Метод для поиска туриста по имени и фамилии
+    void searchTourist(string name, string surname) {
+        for (Tourist& tourist : tourists) {
+            if (tourist.getName() == name && tourist.getSurname() == surname) {
+                cout << "Имя: " << tourist.getName() << endl;
+                cout << "Фамилия: " << tourist.getSurname() << endl;
+                cout << "Возраст: " << tourist.getAge() << endl;
+                cout << "Электронная почта: " << tourist.getEmail() << endl;
+                cout << "Город: " << tourist.getCity() << endl;
+                cout << "Общая стоимость проживания: " << tourist.getTotalCost() << endl;
+                return;
+            }
+        }
+
+        cout << "Турист с указанным именем и фамилией не найден." << endl;
+    }
+
+    // Метод для сохранения данных в файле
+    void saveData() {
+        ofstream file(filename);
+        if (file.is_open()) {
+            for (Tourist& tourist : tourists) {
+                file << tourist.getName() << " " << tourist.getSurname() << " "
+                    << tourist.getAge() << " " << tourist.getEmail() << " "
+                    << tourist.getCity() << " " << tourist.getTotalCost() << endl;
+            }
+
+            file.close();
+            cout << "Данные успешно сохранены в файле." << endl;
+        }
+        else {
+            cout << "Ошибка при открытии файла." << endl;
+        }
+    }
+
+    // Метод для вывода всех туристов
+    void displayAllTourists() {
+        if (tourists.empty())
+        {
+            cout << "База данных пуста. Нет доступных туристов." << endl;
+        }
+        else {
+            cout << "Список всех туристов:" << endl;
+            for (Tourist& tourist : tourists) {
+                cout << "Имя: " << tourist.getName() << endl;
+                cout << "Фамилия: " << tourist.getSurname() << endl;
+                cout << "Возраст: " << tourist.getAge() << endl;
+                cout << "Электронная почта: " << tourist.getEmail() << endl;
+                cout << "Город: " << tourist.getCity() << endl;
+                cout << "Общая стоимость проживания: " << tourist.getTotalCost() << endl;
+                cout << "------------------------" << endl;
+            }
+        }
+    }
+};
 
 int main() {
     SetConsoleCP(1251);
     SetConsoleOutputCP(1251);
 
-    zadanie2();
-    
-}
+    TouristDatabase database("tourists.txt");
+    // Считываем данные из файла
+    database.loadData();
 
-void zadanie1() {
+    int choice;
+    while (true) {
+        cout << "Выберите действие:" << endl;
+        cout << "1. Добавить нового туриста" << endl;
+        cout << "2. Изменить данные туриста" << endl;
+        cout << "3. Поиск туриста" << endl;
+        cout << "4. Сохранить данные" << endl;
+        cout << "5. Вывести всех туристов" << endl;
+        cout << "6. Выход" << endl;
+        cout << "Введите номер выбранного действия: ";
+        cin >> choice;
 
-    string* AS; // массив вводимых строк, это результат
-    string* AS2; // дополнительный массив строк
-    int count; // количество элементов в массиве
-    string s; // дополнительная переменная-строка
-    char buf[80]; // буфер для ввода строк
+        if (choice == 1) {
+            string name, surname, email, city;
+            int age;
+            double totalCost;
 
-    //Цикл ввода строк, конец ввода - пустая строка ""
-    cout << "Введите строки\n";
-    count = 0;
-    AS = nullptr;
+            cout << "Введите данные нового туриста:" << endl;
+            cout << "Имя: ";
+            cin >> name;
+            cout << "Фамилия: ";
+            cin >> surname;
+            cout << "Возраст: ";
+            cin >> age;
+            cout << "Электронная почта: ";
+            cin >> email;
+            cout << "Город: ";
+            cin >> city;
+            cout << "Общая стоимость проживания: ";
+            cin >> totalCost;
 
-    do
-    {
-        cout << "=> ";
-        cin.getline(buf, 80, '\n'); // строки вводятся с пробелами
-        s = buf;
-        char* pch = strtok(buf, " "),  // получаем первое слово
-            * word = 0; // самое длинное слово
-
-        int length = strlen(pch);
-        int maxLen = 0; // самое длинное слово
-
-        while (pch != NULL) // пока есть слова
-        {
-            length = strlen(pch);// определяем длинну слова
-
-            if (maxLen < length) // определяем самое длинное слово
-            {
-                maxLen = length;
-                word = pch; // сохраняем указатель на текущее слово
-            }
-
-            pch = strtok(NULL, " "); // получаем следующее слово
+            Tourist tourist(name, surname, age, email, city, totalCost);
+            database.addTourist(tourist);
         }
-        cout << "Самое длинное слово: " << word << endl; // само слово
+        else if (choice == 2) {
+            string email;
 
+            cout << "Введите электронную почту туриста, данные которого нужно изменить: ";
+            cin >> email;
 
-        if (s != "")
-        {
-            int pos = s.find("quit");// поиск слова "quit"
-            if (pos == -1) {
-                count++;
-
-                AS2 = new string[count];
-
-                for (int i = 0; i < count - 1; i++)
-                    AS2[i] = AS[i];
-
-                AS2[count - 1] = s;
-
-                if (AS != nullptr)
-                    delete[] AS;
-
-                AS = AS2;
-            }
-            else
-                break;
+            database.updateTourist(email);
         }
-    } while (s != "");
+        else if (choice == 3) {
+            string name, surname;
 
-    //Вывод нового массива
-    cout << "\nМассив строк:\n";
-    if (count > 0)
-        for (int i = 0; i < count; i++)
-            cout << "AS[" << i << "] = " << AS[i] << ::endl;
-    else
-        cout << "array AS is empty.";
+            cout << "Введите имя туриста для поиска: ";
+            cin >> name;
+            cout << "Введите фамилию туриста для поиска: ";
+            cin >> surname;
 
-    //После использования массива AS освободить память, выделенную для него
-    delete[] AS;
+            database.searchTourist(name, surname);
+        }
+        else if (choice == 4) {
+            database.saveData();
+        }
+        else if (choice == 5) {
+            database.displayAllTourists();
+        }
+        else if (choice == 6) {
+            break;
+        }
+        else {
+            cout << "Некорректный выбор. Повторите попытку." << endl;
+        }
 
-}
-
-void zadanie2(){
-    string s;
-    int i =1;
-    ifstream file("first.txt");
-    ofstream end("final.txt");
-
-    if (!file.is_open())
-        cout << "Файл не найден" << endl;
-    if (file.is_open())
-        cout << "Нумерация прошла успешно:)"<<endl;
-    while (!file.eof())//считывает до конца файла
-    {   //чтение файла и нумерация строк
-        getline(file, s);
-        end << i++ <<" ";
-        end << s << endl;
-
-    }
-    file.close();
- }
-
-void zadanie3() {
-    const int n = 1;//кол-во записей 
-    order spisok[n];
-    for (int i = 0; i < n; i++) {
-        cout << "Введите расчетный счет плательщика: " << endl;
-        cin >> spisok[i].plat;
-        cout << "Введите расчетный счет получателя: " << endl;
-        cin >> spisok[i].pol;
-        cout << "Описание назначения платежа: " << endl;
-        cin.ignore(sizeof(int), '\n');
-        getline(cin, spisok[i].descrp);
-        cout << "Введите сумму: " << endl;
-        cin >> spisok[i].summa;
+        cout << endl;
     }
 
-    cout << endl;
-
-    for (int i = 0; i < n; i++) {
-        unsigned int shet;
-        cout << "Введите расчетный счет плательщика, чтобы узнат сумму списания:" << endl;
-        cin >> shet;
-        if (shet == spisok[i].plat)
-            cout << "Со счета №" << spisok[i].plat << " было списано: " << spisok[i].summa << " руб." << endl;
-        else
-            cout << "Такого расчетного счета не существует" << endl;
-        break;
-    }
+    return 0;
 }
