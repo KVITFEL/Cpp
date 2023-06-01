@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
+#include <windows.h>
 using namespace std;
 
 class Tourist {
@@ -111,10 +112,10 @@ public:
         cout << "Турист с указанной электронной почтой не найден." << endl;
     }
 
-    // Метод для поиска туриста
-    void searchTourist(string email) {
+    // Метод для поиска туриста по имени и фамилии
+    void searchTourist(string name, string surname) {
         for (Tourist& tourist : tourists) {
-            if (tourist.getEmail() == email) {
+            if (tourist.getName() == name && tourist.getSurname() == surname) {
                 cout << "Имя: " << tourist.getName() << endl;
                 cout << "Фамилия: " << tourist.getSurname() << endl;
                 cout << "Возраст: " << tourist.getAge() << endl;
@@ -125,7 +126,7 @@ public:
             }
         }
 
-        cout << "Турист с указанной электронной почтой не найден." << endl;
+        cout << "Турист с указанным именем и фамилией не найден." << endl;
     }
 
     // Метод для сохранения данных в файле
@@ -150,7 +151,7 @@ public:
     void displayAllTourists() {
         if (tourists.empty())
         {
-            cout << "База данных пуста. Нет доступных туристов." << endl;
+            cout << "Нет доступных туристов." << endl;
         }
         else {
             cout << "Список всех туристов:" << endl;
@@ -168,7 +169,9 @@ public:
 };
 
 int main() {
-    setlocale(LC_ALL, "Rus");
+    SetConsoleCP(1251);
+    SetConsoleOutputCP(1251);
+
     TouristDatabase database("tourists.txt");
     // Считываем данные из файла
     database.loadData();
@@ -216,12 +219,14 @@ int main() {
             database.updateTourist(email);
         }
         else if (choice == 3) {
-            string email;
+            string name, surname;
 
-            cout << "Введите электронную почту туриста для поиска: ";
-            cin >> email;
+            cout << "Введите имя туриста для поиска: ";
+            cin >> name;
+            cout << "Введите фамилию туриста для поиска: ";
+            cin >> surname;
 
-            database.searchTourist(email);
+            database.searchTourist(name, surname);
         }
         else if (choice == 4) {
             database.saveData();
